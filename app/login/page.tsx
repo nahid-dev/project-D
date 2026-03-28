@@ -104,7 +104,7 @@ function LoginFormContent() {
                   {error}
                 </div>
               )}
-
+                          {/* Phone number field */}
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-foreground">
                   Phone Number

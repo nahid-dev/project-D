@@ -1,7 +1,8 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/lib/LanguageContext';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Droplet } from 'lucide-react';
 
 function LoginFormContent() {
+  const router = useRouter();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const userType = searchParams.get('type') || 'donor';
 
@@ -32,7 +35,7 @@ function LoginFormContent() {
         setStep('otp');
         console.log('OTP sent to:', phone);
       } else {
-        setError('Please enter a valid phone number');
+        setError(t('valid_phone_error'));
       }
     }, 1000);
   };
@@ -59,24 +62,37 @@ function LoginFormContent() {
       if (otp && otp.length === 6) {
         // Here would be actual authentication logic
         console.log('Login verified:', { phone, otp, userType });
+        
+        // Flow Logic: Redirect based on userType
+        if (userType === 'request') {
+          router.push('/request-blood');
+          return;
+        }
+
+        const donorProfile = localStorage.getItem('donorProfile');
+        if (donorProfile) {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding');
+        }
       } else {
-        setError('Please enter a valid 6-digit OTP');
+        setError(t('valid_otp_error'));
       }
     }, 1000);
   };
 
   const getTitle = () => {
     if (userType === 'donor') {
-      return 'Donor Login';
+      return t('donor_login');
     }
-    return 'Login';
+    return t('login_title');
   };
 
   const getDescription = () => {
     if (userType === 'donor') {
-      return 'Sign in to your donor account to manage your donations and health information';
+      return t('donor_login_description');
     }
-    return 'Sign in to your account';
+    return t('login_description');
   };
 
   const getSignupLink = () => {
@@ -107,7 +123,7 @@ function LoginFormContent() {
                           {/* Phone number field */}
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-foreground">
-                  Phone Number
+                  {t('phone_number')}
                 </label>
                 <Input
                   id="phone"
@@ -116,7 +132,7 @@ function LoginFormContent() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={isLoading}
-                  className="w-full"
+                  className="w-full font-sans"
                   required
                 />
               </div>
@@ -127,16 +143,16 @@ function LoginFormContent() {
                 className="w-full"
                 size="lg"
               >
-                {isLoading ? 'Sending OTP...' : 'Send OTP'}
+                {isLoading ? t('sending_otp') : t('send_otp')}
               </Button>
 
               <div className="px-2 py-4 text-sm text-muted-foreground text-center border-t">
-                Don&apos;t have an account?{' '}
+                {t('no_account')}{' '}
                 <Link
                   href={getSignupLink()}
                   className="font-medium text-primary hover:underline"
                 >
-                  Register here
+                  {t('register_here')}
                 </Link>
               </div>
             </form>
@@ -150,7 +166,7 @@ function LoginFormContent() {
 
               <div className="space-y-2">
                 <p className="text-sm text-muted-foreground">
-                  Enter the 6-digit OTP sent to <span className="font-medium text-foreground">{phone}</span>
+                  {t('enter_otp')} <span className="font-medium text-foreground font-sans">{phone}</span>
                 </p>
                 <Input
                   id="otp"
@@ -160,7 +176,7 @@ function LoginFormContent() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   disabled={isLoading}
-                  className="w-full text-center text-2xl tracking-widest"
+                  className="w-full text-center text-2xl tracking-widest font-sans"
                   required
                 />
               </div>
@@ -171,7 +187,7 @@ function LoginFormContent() {
                 className="w-full"
                 size="lg"
               >
-                {isLoading ? 'Verifying...' : 'Verify OTP'}
+                {isLoading ? t('verifying') : t('verify_otp')}
               </Button>
 
               <Button
@@ -184,18 +200,18 @@ function LoginFormContent() {
                 }}
                 className="w-full"
               >
-                Use Different Number
+                {t('different_number')}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">
-                Didn&apos;t receive the OTP?{' '}
+                {t('resend_otp_text')}{' '}
                 <button
                   type="button"
                   onClick={handleResendOTP}
                   className="font-medium text-primary hover:underline"
                   disabled={isLoading}
                 >
-                  Resend OTP
+                  {t('resend_otp_btn')}
                 </button>
               </div>
             </form>

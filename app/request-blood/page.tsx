@@ -15,6 +15,7 @@ import {
 import { Droplet, MapPin, Loader2, CheckCircle2, Clock, Hospital, Phone, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/LanguageContext';
+import { useUserLocation } from '@/hooks/useUserLocation';
 
 export default function RequestBloodPage() {
   const router = useRouter();
@@ -35,10 +36,26 @@ export default function RequestBloodPage() {
     requiredDate: '',
   });
 
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const {
+    location: detectedLocation,
+    loading: isLoadingLocation,
+    error: locationError,
+    getLocation,
+    setLocation: setDetectedLocation
+  } = useUserLocation();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [locationError, setLocationError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Sync detected location to formData
+  useEffect(() => {
+    if (detectedLocation.lat || detectedLocation.address) {
+      setFormData(prev => ({
+        ...prev,
+        location: detectedLocation
+      }));
+    }
+  }, [detectedLocation]);
 
   useEffect(() => {
     // Prefill contact from donorProfile if available
@@ -56,39 +73,7 @@ export default function RequestBloodPage() {
   }, []);
 
   const handleLocationFetch = () => {
-    setIsLoadingLocation(true);
-    setLocationError('');
-    
-    if (!navigator.geolocation) {
-      setLocationError(t('location_unavailable'));
-      setIsLoadingLocation(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setFormData(prev => ({
-          ...prev,
-          location: {
-            ...prev.location,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }
-        }));
-        setIsLoadingLocation(false);
-      },
-      (error) => {
-        let msgKey = 'failed_location';
-        if (error.code === error.PERMISSION_DENIED) {
-          msgKey = 'location_denied';
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          msgKey = 'location_unavailable';
-        }
-        setLocationError(t(msgKey));
-        setIsLoadingLocation(false);
-      },
-      { timeout: 10000 }
-    );
+    getLocation();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -240,17 +225,20 @@ export default function RequestBloodPage() {
                   ) : (
                     <MapPin className={cn("size-5", formData.location.lat ? "text-primary" : "text-muted-foreground")} />
                   )}
-                  {formData.location.lat ? t('location_captured') : t('use_current_location')}
+                  {isLoadingLocation ? t('fetching_location') : (formData.location.lat ? t('location_captured') : t('use_current_location'))}
                 </Button>
                 
                 <div className="relative">
                   <Input
                     placeholder={t('manual_location_placeholder')}
                     value={formData.location.address}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      location: { ...prev.location, address: e.target.value } 
-                    }))}
+                    onChange={(e) => {
+                      const newAddress = e.target.value;
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        location: { ...prev.location, address: newAddress } 
+                      }));
+                    }}
                     className="h-12 text-base bg-background/50 focus:bg-background transition-all"
                     required
                   />

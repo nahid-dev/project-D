@@ -21,6 +21,7 @@ import {
 import { MapPin, Loader2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/LanguageContext';
+import { useUserLocation } from '@/hooks/useUserLocation';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -38,10 +39,26 @@ export default function OnboardingPage() {
     isAvailable: true,
   });
 
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const {
+    location: detectedLocation,
+    loading: isLoadingLocation,
+    error: locationError,
+    getLocation,
+    setLocation: setDetectedLocation
+  } = useUserLocation();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [locationError, setLocationError] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Sync detected location to formData
+  useEffect(() => {
+    if (detectedLocation.lat || detectedLocation.address) {
+      setFormData(prev => ({
+        ...prev,
+        location: detectedLocation
+      }));
+    }
+  }, [detectedLocation]);
 
   // Check if user already has a profile
   useEffect(() => {
@@ -52,41 +69,7 @@ export default function OnboardingPage() {
   }, [router]);
 
   const handleLocationFetch = () => {
-    setIsLoadingLocation(true);
-    setLocationError('');
-    
-    if (!navigator.geolocation) {
-      setLocationError(t('location_unavailable'));
-      setIsLoadingLocation(false);
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setFormData(prev => ({
-          ...prev,
-          location: {
-            ...prev.location,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          }
-        }));
-        setIsLoadingLocation(false);
-      },
-      (error) => {
-        let msgKey = 'failed_location';
-        if (error.code === error.PERMISSION_DENIED) {
-          msgKey = 'location_denied';
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          msgKey = 'location_unavailable';
-        } else if (error.code === error.TIMEOUT) {
-          msgKey = 'location_timeout';
-        }
-        setLocationError(t(msgKey));
-        setIsLoadingLocation(false);
-      },
-      { timeout: 10000 }
-    );
+    getLocation();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -217,7 +200,7 @@ export default function OnboardingPage() {
                     ) : (
                       <MapPin className={cn("size-5", formData.location.lat ? "text-primary" : "text-muted-foreground")} />
                     )}
-                    {formData.location.lat ? t('location_captured') : t('use_current_location')}
+                    {isLoadingLocation ? t('fetching_location') : (formData.location.lat ? t('location_captured') : t('use_current_location'))}
                   </Button>
                 </div>
                 
@@ -225,10 +208,15 @@ export default function OnboardingPage() {
                   <Input
                     placeholder={t('manual_location_placeholder')}
                     value={formData.location.address}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      location: { ...prev.location, address: e.target.value } 
-                    }))}
+                    onChange={(e) => {
+                      const newAddress = e.target.value;
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        location: { ...prev.location, address: newAddress } 
+                      }));
+                      // Also update hook state to keep them in sync if needed, 
+                      // or just rely on formData for submission
+                    }}
                     className="h-12 text-base bg-background/50 focus:bg-background transition-all"
                     required
                   />

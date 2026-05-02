@@ -13,6 +13,7 @@ export const en = {
   availability_helper: "Turn this off if you're temporarily unable to donate.",
   submit: "Complete Registration",
   saving: "Saving Your Profile...",
+  fetching_location: "Fetching location...",
   success_title: "Welcome Aboard! ❤️",
   success_subtitle: "Your donor profile has been created successfully. Redirecting to your dashboard...",
   dashboard_title: "Donor Dashboard",

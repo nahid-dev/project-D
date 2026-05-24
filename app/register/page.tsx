@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Droplet } from 'lucide-react';
 
 function RegisterFormContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const userType = searchParams.get('type') || 'donor';
 
   const [step, setStep] = useState<'details' | 'phone' | 'otp'>(
@@ -24,6 +25,7 @@ function RegisterFormContent() {
     email: '',
     city: '',
     healthConditions: '',
+    password: '',
   });
 
   const [phone, setPhone] = useState('');
@@ -35,8 +37,8 @@ function RegisterFormContent() {
     e.preventDefault();
     setError('');
 
-    if (!formData.fullName || !formData.dob || !formData.gender || !formData.bloodType || !formData.city) {
-      setError('Please fill in all required fields');
+    if (!formData.fullName || !formData.dob || !formData.gender || !formData.bloodType || !formData.city || !formData.password) {
+      setError('Please fill in all required fields (including password)');
       return;
     }
 
@@ -48,15 +50,29 @@ function RegisterFormContent() {
     setError('');
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      if (phone && phone.length >= 10) {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone,
+          ...formData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setStep('otp');
         console.log('OTP sent to:', phone);
       } else {
-        setError('Please enter a valid phone number');
+        setError(data.message || 'Failed to register. Please check your inputs.');
       }
-    }, 1000);
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResendOTP = async () => {
@@ -74,15 +90,26 @@ function RegisterFormContent() {
     setError('');
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      if (otp && otp.length === 6) {
-        console.log('Registration completed:', { ...formData, phone, otp, userType });
-        // Here would be actual registration logic
+    try {
+      const response = await fetch('/api/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log('Registration completed:', { ...formData, phone, userType });
+        router.push('/dashboard');
       } else {
-        setError('Please enter a valid 6-digit OTP');
+        setError(data.message || 'Invalid OTP');
       }
-    }, 1000);
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -222,6 +249,22 @@ function RegisterFormContent() {
               </div>
 
               <div className="space-y-2">
+                <label htmlFor="password" className="text-sm font-medium text-foreground">
+                  Password *
+                </label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Enter a secure password (min 6 chars)"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
                 <label htmlFor="email" className="text-sm font-medium text-foreground">
                   Email (Optional)
                 </label>
@@ -287,7 +330,7 @@ function RegisterFormContent() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="+8801XXXXXXXXX"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={isLoading}

@@ -127,7 +127,7 @@ export default function RequestBloodPage() {
 
   return (
     <div className="max-w-2xl mx-auto w-full px-6 py-10 md:py-16">
-      <Card className="border-none shadow-2xl bg-card/60 backdrop-blur-md ring-1 ring-foreground/5">
+      <Card className="border border-gray-200 ring-0">
         <CardHeader className="text-center space-y-3">
           <div className="flex justify-center">
             <div className="bg-primary/10 p-3 rounded-2xl">
@@ -279,6 +279,7 @@ export default function RequestBloodPage() {
                   value={formData.contact}
                   onChange={(e) => setFormData(prev => ({ ...prev, contact: e.target.value }))}
                   required
+                  placeholder='e.g. 01700000000'
                   className="h-12 text-base bg-background/50 focus:bg-background transition-all font-sans"
                 />
               </div>
@@ -296,19 +297,20 @@ export default function RequestBloodPage() {
                   { id: '24h', label: t('within_24h') },
                   { id: 'schedule', label: t('schedule') },
                 ].map((option) => (
-                  <button
+                  <Button
                     key={option.id}
                     type="button"
+                    variant={formData.urgency === option.id ? "default" : "outline"}
                     onClick={() => setFormData(prev => ({ ...prev, urgency: option.id }))}
                     className={cn(
-                      "px-2 py-4 rounded-2xl border-2 text-xs font-bold transition-all duration-300 shadow-sm",
+                      "px-2 py-4 h-auto rounded-full border text-xs font-bold transition-all duration-300 cursor-pointer",
                       formData.urgency === option.id 
-                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.02]" 
+                        ? "bg-primary text-white border-primary shadow-lg shadow-primary/20 scale-[1.02] hover:bg-primary" 
                         : "bg-background border-border hover:border-primary/50 text-foreground/70"
                     )}
                   >
                     {option.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
               

@@ -30,7 +30,6 @@ const CustomSelect: React.FC<CustomSelectProps> = ({
   const selectedOption = options.find((opt) => opt.value === value) || null;
 
   // CSS Variables from the theme
-  const cssVariables = getComputedStyle(document.documentElement);
   const isDark = document.documentElement.classList.contains('dark');
 
   // Get theme colors and radius

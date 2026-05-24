@@ -27,17 +27,27 @@ function LoginFormContent() {
     setError('');
     setIsLoading(true);
 
-    // Simulate API call for sending OTP
-    setTimeout(() => {
-      setIsLoading(false);
-      if (phone && phone.length >= 10) {
+    try {
+      const response = await fetch('/api/auth/login-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
         setOtpSent(true);
         setStep('otp');
         console.log('OTP sent to:', phone);
       } else {
-        setError(t('valid_phone_error'));
+        setError(data.message || t('valid_phone_error'));
       }
-    }, 1000);
+    } catch (err) {
+      setError(t('valid_phone_error'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleResendOTP = async () => {
@@ -56,29 +66,38 @@ function LoginFormContent() {
     setError('');
     setIsLoading(true);
 
-    // Simulate API call for verifying OTP
-    setTimeout(() => {
-      setIsLoading(false);
-      if (otp && otp.length === 6) {
-        // Here would be actual authentication logic
-        console.log('Login verified:', { phone, otp, userType });
+    try {
+      const response = await fetch('/api/auth/verify-login-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        console.log('Login verified:', { phone, isNewUser: data.isNewUser });
         
-        // Flow Logic: Redirect based on userType
         if (userType === 'request') {
           router.push('/request-blood');
           return;
         }
 
-        const donorProfile = localStorage.getItem('donorProfile');
-        if (donorProfile) {
-          router.push('/dashboard');
-        } else {
+        if (data.isNewUser) {
+          localStorage.setItem('verifiedPhone', phone);
           router.push('/onboarding');
+        } else {
+          localStorage.setItem('donorProfile', JSON.stringify({ phone }));
+          router.push('/dashboard');
         }
       } else {
-        setError(t('valid_otp_error'));
+        setError(data.message || t('valid_otp_error'));
       }
-    }, 1000);
+    } catch (err) {
+      setError(t('valid_otp_error'));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getTitle = () => {

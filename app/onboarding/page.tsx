@@ -68,31 +68,66 @@ export default function OnboardingPage() {
     }
   }, [router]);
 
+  // Ensure user came from login OTP verification
+  useEffect(() => {
+    const phone = localStorage.getItem('verifiedPhone');
+    if (!phone && !localStorage.getItem('donorProfile')) {
+      router.push('/login');
+    }
+  }, [router]);
+
   const handleLocationFetch = () => {
     getLocation();
   };
 
+  const isFormValid = formData.name && formData.bloodGroup;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.bloodGroup || !formData.location.address) {
+    if (!isFormValid) {
       return;
     }
 
     setIsSubmitting(true);
     
-    // Simulate API call/save delay
-    setTimeout(() => {
-      localStorage.setItem('donorProfile', JSON.stringify(formData));
-      setShowSuccess(true);
-      setIsSubmitting(false);
-      
-      setTimeout(() => {
-        router.push('/dashboard');
-      }, 2000);
-    }, 1500);
-  };
+    const phone = localStorage.getItem('verifiedPhone');
+    if (!phone) {
+      router.push('/login');
+      return;
+    }
 
-  const isFormValid = formData.name && formData.bloodGroup && formData.location.address;
+    try {
+      const response = await fetch('/api/auth/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone,
+          name: formData.name,
+          bloodGroup: formData.bloodGroup,
+          locationLat: formData.location.lat,
+          locationLng: formData.location.lng,
+          locationAddress: formData.location.address,
+          lastDonationDate: formData.lastDonationDate,
+          isAvailable: formData.isAvailable,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem('donorProfile', JSON.stringify({ phone, ...formData }));
+        localStorage.removeItem('verifiedPhone');
+        setShowSuccess(true);
+        setTimeout(() => router.push('/dashboard'), 2000);
+      } else {
+        console.error(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   if (showSuccess) {
     return (
@@ -179,7 +214,7 @@ export default function OnboardingPage() {
             {/* Location */}
             <div className="space-y-4">
               <label className="text-sm font-semibold text-foreground/80 flex items-center gap-1.5 px-1">
-                {t('location')} <span className="text-primary">*</span>
+                {t('location')} <span className="text-muted-foreground text-xs font-normal">(Optional)</span>
               </label>
               <div className="space-y-3">
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -218,7 +253,6 @@ export default function OnboardingPage() {
                       // or just rely on formData for submission
                     }}
                     className="h-12 text-base bg-background/50 focus:bg-background transition-all"
-                    required
                   />
                   {locationError && (
                     <p className="text-xs text-destructive mt-1.5 font-medium px-1">{locationError}</p>

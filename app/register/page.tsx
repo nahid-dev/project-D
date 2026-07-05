@@ -8,6 +8,9 @@ import { Input } from '@/components/ui/input';
 import CustomSelect from '@/components/ui/CustomSelect';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Droplet } from 'lucide-react';
+import BangladeshLocationSelector, { BangladeshLocation } from '@/components/location/BangladeshLocationSelector';
+import { useTranslation } from '@/lib/LanguageContext';
+import { normalizeLocation } from '@/lib/location/normalizeLocation';
 
 function RegisterFormContent() {
   const searchParams = useSearchParams();
@@ -23,9 +26,14 @@ function RegisterFormContent() {
     gender: '',
     bloodType: '',
     email: '',
-    city: '',
     healthConditions: '',
     password: '',
+  });
+
+  const [location, setLocation] = useState<BangladeshLocation>({
+    division: '',
+    district: '',
+    upazila: '',
   });
 
   const [phone, setPhone] = useState('');
@@ -37,8 +45,8 @@ function RegisterFormContent() {
     e.preventDefault();
     setError('');
 
-    if (!formData.fullName || !formData.dob || !formData.gender || !formData.bloodType || !formData.city || !formData.password) {
-      setError('Please fill in all required fields (including password)');
+    if (!formData.fullName || !formData.dob || !formData.gender || !formData.bloodType || !location.division || !location.district || !location.upazila || !formData.password) {
+      setError('Please fill in all required fields (including password and full location)');
       return;
     }
 
@@ -51,12 +59,18 @@ function RegisterFormContent() {
     setIsLoading(true);
 
     try {
+      const normalized = await normalizeLocation(location);
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phone,
           ...formData,
+          city: normalized?.formattedAddress || `${location.upazila}, ${location.district}, ${location.division}`,
+          locationLat: normalized?.latitude || null,
+          locationLng: normalized?.longitude || null,
+          locationAddress: normalized?.formattedAddress || null,
         }),
       });
 
@@ -231,19 +245,13 @@ function RegisterFormContent() {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="city" className="text-sm font-medium text-foreground">
-                    City *
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium text-foreground">
+                    Location *
                   </label>
-                  <Input
-                    id="city"
-                    name="city"
-                    type="text"
-                    placeholder="New York"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="w-full"
-                    required
+                  <BangladeshLocationSelector
+                    value={location}
+                    onChange={setLocation}
                   />
                 </div>
               </div>
@@ -320,7 +328,7 @@ function RegisterFormContent() {
                 <p className="font-medium mb-2">Contact Information</p>
                 <p>Name: {formData.fullName}</p>
                 <p>Blood Type: {formData.bloodType}</p>
-                <p>City: {formData.city}</p>
+                <p>Location: {`${location.upazila}, ${location.district}`}</p>
               </div>
 
               <div className="space-y-2">

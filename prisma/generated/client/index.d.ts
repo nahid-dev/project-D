@@ -23,6 +23,11 @@ export type Donor = $Result.DefaultSelection<Prisma.$DonorPayload>
  * 
  */
 export type PhoneOTP = $Result.DefaultSelection<Prisma.$PhoneOTPPayload>
+/**
+ * Model BloodRequest
+ * 
+ */
+export type BloodRequest = $Result.DefaultSelection<Prisma.$BloodRequestPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -164,6 +169,16 @@ export class PrismaClient<
     * ```
     */
   get phoneOTP(): Prisma.PhoneOTPDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.bloodRequest`: Exposes CRUD operations for the **BloodRequest** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more BloodRequests
+    * const bloodRequests = await prisma.bloodRequest.findMany()
+    * ```
+    */
+  get bloodRequest(): Prisma.BloodRequestDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -599,7 +614,8 @@ export namespace Prisma {
 
   export const ModelName: {
     Donor: 'Donor',
-    PhoneOTP: 'PhoneOTP'
+    PhoneOTP: 'PhoneOTP',
+    BloodRequest: 'BloodRequest'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -615,7 +631,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "donor" | "phoneOTP"
+      modelProps: "donor" | "phoneOTP" | "bloodRequest"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -767,6 +783,80 @@ export namespace Prisma {
           }
         }
       }
+      BloodRequest: {
+        payload: Prisma.$BloodRequestPayload<ExtArgs>
+        fields: Prisma.BloodRequestFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.BloodRequestFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.BloodRequestFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          findFirst: {
+            args: Prisma.BloodRequestFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.BloodRequestFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          findMany: {
+            args: Prisma.BloodRequestFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>[]
+          }
+          create: {
+            args: Prisma.BloodRequestCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          createMany: {
+            args: Prisma.BloodRequestCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.BloodRequestCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>[]
+          }
+          delete: {
+            args: Prisma.BloodRequestDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          update: {
+            args: Prisma.BloodRequestUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          deleteMany: {
+            args: Prisma.BloodRequestDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.BloodRequestUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.BloodRequestUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>[]
+          }
+          upsert: {
+            args: Prisma.BloodRequestUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$BloodRequestPayload>
+          }
+          aggregate: {
+            args: Prisma.BloodRequestAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateBloodRequest>
+          }
+          groupBy: {
+            args: Prisma.BloodRequestGroupByArgs<ExtArgs>
+            result: $Utils.Optional<BloodRequestGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.BloodRequestCountArgs<ExtArgs>
+            result: $Utils.Optional<BloodRequestCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -877,6 +967,7 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     donor?: DonorOmit
     phoneOTP?: PhoneOTPOmit
+    bloodRequest?: BloodRequestOmit
   }
 
   /* Types for Logging */
@@ -3191,6 +3282,1178 @@ export namespace Prisma {
 
 
   /**
+   * Model BloodRequest
+   */
+
+  export type AggregateBloodRequest = {
+    _count: BloodRequestCountAggregateOutputType | null
+    _avg: BloodRequestAvgAggregateOutputType | null
+    _sum: BloodRequestSumAggregateOutputType | null
+    _min: BloodRequestMinAggregateOutputType | null
+    _max: BloodRequestMaxAggregateOutputType | null
+  }
+
+  export type BloodRequestAvgAggregateOutputType = {
+    units: number | null
+    locationLat: number | null
+    locationLng: number | null
+  }
+
+  export type BloodRequestSumAggregateOutputType = {
+    units: number | null
+    locationLat: number | null
+    locationLng: number | null
+  }
+
+  export type BloodRequestMinAggregateOutputType = {
+    id: string | null
+    requesterPhone: string | null
+    patientName: string | null
+    bloodGroup: string | null
+    units: number | null
+    locationLat: number | null
+    locationLng: number | null
+    locationAddress: string | null
+    hospital: string | null
+    contact: string | null
+    urgency: string | null
+    requiredDate: Date | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BloodRequestMaxAggregateOutputType = {
+    id: string | null
+    requesterPhone: string | null
+    patientName: string | null
+    bloodGroup: string | null
+    units: number | null
+    locationLat: number | null
+    locationLng: number | null
+    locationAddress: string | null
+    hospital: string | null
+    contact: string | null
+    urgency: string | null
+    requiredDate: Date | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type BloodRequestCountAggregateOutputType = {
+    id: number
+    requesterPhone: number
+    patientName: number
+    bloodGroup: number
+    units: number
+    locationLat: number
+    locationLng: number
+    locationAddress: number
+    hospital: number
+    contact: number
+    urgency: number
+    requiredDate: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type BloodRequestAvgAggregateInputType = {
+    units?: true
+    locationLat?: true
+    locationLng?: true
+  }
+
+  export type BloodRequestSumAggregateInputType = {
+    units?: true
+    locationLat?: true
+    locationLng?: true
+  }
+
+  export type BloodRequestMinAggregateInputType = {
+    id?: true
+    requesterPhone?: true
+    patientName?: true
+    bloodGroup?: true
+    units?: true
+    locationLat?: true
+    locationLng?: true
+    locationAddress?: true
+    hospital?: true
+    contact?: true
+    urgency?: true
+    requiredDate?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BloodRequestMaxAggregateInputType = {
+    id?: true
+    requesterPhone?: true
+    patientName?: true
+    bloodGroup?: true
+    units?: true
+    locationLat?: true
+    locationLng?: true
+    locationAddress?: true
+    hospital?: true
+    contact?: true
+    urgency?: true
+    requiredDate?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type BloodRequestCountAggregateInputType = {
+    id?: true
+    requesterPhone?: true
+    patientName?: true
+    bloodGroup?: true
+    units?: true
+    locationLat?: true
+    locationLng?: true
+    locationAddress?: true
+    hospital?: true
+    contact?: true
+    urgency?: true
+    requiredDate?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type BloodRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BloodRequest to aggregate.
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BloodRequests to fetch.
+     */
+    orderBy?: BloodRequestOrderByWithRelationInput | BloodRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: BloodRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BloodRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BloodRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned BloodRequests
+    **/
+    _count?: true | BloodRequestCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: BloodRequestAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: BloodRequestSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: BloodRequestMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: BloodRequestMaxAggregateInputType
+  }
+
+  export type GetBloodRequestAggregateType<T extends BloodRequestAggregateArgs> = {
+        [P in keyof T & keyof AggregateBloodRequest]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateBloodRequest[P]>
+      : GetScalarType<T[P], AggregateBloodRequest[P]>
+  }
+
+
+
+
+  export type BloodRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: BloodRequestWhereInput
+    orderBy?: BloodRequestOrderByWithAggregationInput | BloodRequestOrderByWithAggregationInput[]
+    by: BloodRequestScalarFieldEnum[] | BloodRequestScalarFieldEnum
+    having?: BloodRequestScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: BloodRequestCountAggregateInputType | true
+    _avg?: BloodRequestAvgAggregateInputType
+    _sum?: BloodRequestSumAggregateInputType
+    _min?: BloodRequestMinAggregateInputType
+    _max?: BloodRequestMaxAggregateInputType
+  }
+
+  export type BloodRequestGroupByOutputType = {
+    id: string
+    requesterPhone: string
+    patientName: string
+    bloodGroup: string
+    units: number
+    locationLat: number | null
+    locationLng: number | null
+    locationAddress: string
+    hospital: string | null
+    contact: string
+    urgency: string
+    requiredDate: Date | null
+    status: string
+    createdAt: Date
+    updatedAt: Date
+    _count: BloodRequestCountAggregateOutputType | null
+    _avg: BloodRequestAvgAggregateOutputType | null
+    _sum: BloodRequestSumAggregateOutputType | null
+    _min: BloodRequestMinAggregateOutputType | null
+    _max: BloodRequestMaxAggregateOutputType | null
+  }
+
+  type GetBloodRequestGroupByPayload<T extends BloodRequestGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<BloodRequestGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof BloodRequestGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], BloodRequestGroupByOutputType[P]>
+            : GetScalarType<T[P], BloodRequestGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type BloodRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requesterPhone?: boolean
+    patientName?: boolean
+    bloodGroup?: boolean
+    units?: boolean
+    locationLat?: boolean
+    locationLng?: boolean
+    locationAddress?: boolean
+    hospital?: boolean
+    contact?: boolean
+    urgency?: boolean
+    requiredDate?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bloodRequest"]>
+
+  export type BloodRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requesterPhone?: boolean
+    patientName?: boolean
+    bloodGroup?: boolean
+    units?: boolean
+    locationLat?: boolean
+    locationLng?: boolean
+    locationAddress?: boolean
+    hospital?: boolean
+    contact?: boolean
+    urgency?: boolean
+    requiredDate?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bloodRequest"]>
+
+  export type BloodRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    requesterPhone?: boolean
+    patientName?: boolean
+    bloodGroup?: boolean
+    units?: boolean
+    locationLat?: boolean
+    locationLng?: boolean
+    locationAddress?: boolean
+    hospital?: boolean
+    contact?: boolean
+    urgency?: boolean
+    requiredDate?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["bloodRequest"]>
+
+  export type BloodRequestSelectScalar = {
+    id?: boolean
+    requesterPhone?: boolean
+    patientName?: boolean
+    bloodGroup?: boolean
+    units?: boolean
+    locationLat?: boolean
+    locationLng?: boolean
+    locationAddress?: boolean
+    hospital?: boolean
+    contact?: boolean
+    urgency?: boolean
+    requiredDate?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type BloodRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "requesterPhone" | "patientName" | "bloodGroup" | "units" | "locationLat" | "locationLng" | "locationAddress" | "hospital" | "contact" | "urgency" | "requiredDate" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["bloodRequest"]>
+
+  export type $BloodRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "BloodRequest"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      requesterPhone: string
+      patientName: string
+      bloodGroup: string
+      units: number
+      locationLat: number | null
+      locationLng: number | null
+      locationAddress: string
+      hospital: string | null
+      contact: string
+      urgency: string
+      requiredDate: Date | null
+      status: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["bloodRequest"]>
+    composites: {}
+  }
+
+  type BloodRequestGetPayload<S extends boolean | null | undefined | BloodRequestDefaultArgs> = $Result.GetResult<Prisma.$BloodRequestPayload, S>
+
+  type BloodRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<BloodRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: BloodRequestCountAggregateInputType | true
+    }
+
+  export interface BloodRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['BloodRequest'], meta: { name: 'BloodRequest' } }
+    /**
+     * Find zero or one BloodRequest that matches the filter.
+     * @param {BloodRequestFindUniqueArgs} args - Arguments to find a BloodRequest
+     * @example
+     * // Get one BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends BloodRequestFindUniqueArgs>(args: SelectSubset<T, BloodRequestFindUniqueArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one BloodRequest that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {BloodRequestFindUniqueOrThrowArgs} args - Arguments to find a BloodRequest
+     * @example
+     * // Get one BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends BloodRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, BloodRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BloodRequest that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestFindFirstArgs} args - Arguments to find a BloodRequest
+     * @example
+     * // Get one BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends BloodRequestFindFirstArgs>(args?: SelectSubset<T, BloodRequestFindFirstArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first BloodRequest that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestFindFirstOrThrowArgs} args - Arguments to find a BloodRequest
+     * @example
+     * // Get one BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends BloodRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, BloodRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more BloodRequests that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all BloodRequests
+     * const bloodRequests = await prisma.bloodRequest.findMany()
+     * 
+     * // Get first 10 BloodRequests
+     * const bloodRequests = await prisma.bloodRequest.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const bloodRequestWithIdOnly = await prisma.bloodRequest.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends BloodRequestFindManyArgs>(args?: SelectSubset<T, BloodRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a BloodRequest.
+     * @param {BloodRequestCreateArgs} args - Arguments to create a BloodRequest.
+     * @example
+     * // Create one BloodRequest
+     * const BloodRequest = await prisma.bloodRequest.create({
+     *   data: {
+     *     // ... data to create a BloodRequest
+     *   }
+     * })
+     * 
+     */
+    create<T extends BloodRequestCreateArgs>(args: SelectSubset<T, BloodRequestCreateArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many BloodRequests.
+     * @param {BloodRequestCreateManyArgs} args - Arguments to create many BloodRequests.
+     * @example
+     * // Create many BloodRequests
+     * const bloodRequest = await prisma.bloodRequest.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends BloodRequestCreateManyArgs>(args?: SelectSubset<T, BloodRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many BloodRequests and returns the data saved in the database.
+     * @param {BloodRequestCreateManyAndReturnArgs} args - Arguments to create many BloodRequests.
+     * @example
+     * // Create many BloodRequests
+     * const bloodRequest = await prisma.bloodRequest.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many BloodRequests and only return the `id`
+     * const bloodRequestWithIdOnly = await prisma.bloodRequest.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends BloodRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, BloodRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a BloodRequest.
+     * @param {BloodRequestDeleteArgs} args - Arguments to delete one BloodRequest.
+     * @example
+     * // Delete one BloodRequest
+     * const BloodRequest = await prisma.bloodRequest.delete({
+     *   where: {
+     *     // ... filter to delete one BloodRequest
+     *   }
+     * })
+     * 
+     */
+    delete<T extends BloodRequestDeleteArgs>(args: SelectSubset<T, BloodRequestDeleteArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one BloodRequest.
+     * @param {BloodRequestUpdateArgs} args - Arguments to update one BloodRequest.
+     * @example
+     * // Update one BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends BloodRequestUpdateArgs>(args: SelectSubset<T, BloodRequestUpdateArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more BloodRequests.
+     * @param {BloodRequestDeleteManyArgs} args - Arguments to filter BloodRequests to delete.
+     * @example
+     * // Delete a few BloodRequests
+     * const { count } = await prisma.bloodRequest.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends BloodRequestDeleteManyArgs>(args?: SelectSubset<T, BloodRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BloodRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many BloodRequests
+     * const bloodRequest = await prisma.bloodRequest.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends BloodRequestUpdateManyArgs>(args: SelectSubset<T, BloodRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more BloodRequests and returns the data updated in the database.
+     * @param {BloodRequestUpdateManyAndReturnArgs} args - Arguments to update many BloodRequests.
+     * @example
+     * // Update many BloodRequests
+     * const bloodRequest = await prisma.bloodRequest.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more BloodRequests and only return the `id`
+     * const bloodRequestWithIdOnly = await prisma.bloodRequest.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends BloodRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, BloodRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one BloodRequest.
+     * @param {BloodRequestUpsertArgs} args - Arguments to update or create a BloodRequest.
+     * @example
+     * // Update or create a BloodRequest
+     * const bloodRequest = await prisma.bloodRequest.upsert({
+     *   create: {
+     *     // ... data to create a BloodRequest
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the BloodRequest we want to update
+     *   }
+     * })
+     */
+    upsert<T extends BloodRequestUpsertArgs>(args: SelectSubset<T, BloodRequestUpsertArgs<ExtArgs>>): Prisma__BloodRequestClient<$Result.GetResult<Prisma.$BloodRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of BloodRequests.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestCountArgs} args - Arguments to filter BloodRequests to count.
+     * @example
+     * // Count the number of BloodRequests
+     * const count = await prisma.bloodRequest.count({
+     *   where: {
+     *     // ... the filter for the BloodRequests we want to count
+     *   }
+     * })
+    **/
+    count<T extends BloodRequestCountArgs>(
+      args?: Subset<T, BloodRequestCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], BloodRequestCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a BloodRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends BloodRequestAggregateArgs>(args: Subset<T, BloodRequestAggregateArgs>): Prisma.PrismaPromise<GetBloodRequestAggregateType<T>>
+
+    /**
+     * Group by BloodRequest.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {BloodRequestGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends BloodRequestGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: BloodRequestGroupByArgs['orderBy'] }
+        : { orderBy?: BloodRequestGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, BloodRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetBloodRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the BloodRequest model
+   */
+  readonly fields: BloodRequestFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for BloodRequest.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__BloodRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the BloodRequest model
+   */
+  interface BloodRequestFieldRefs {
+    readonly id: FieldRef<"BloodRequest", 'String'>
+    readonly requesterPhone: FieldRef<"BloodRequest", 'String'>
+    readonly patientName: FieldRef<"BloodRequest", 'String'>
+    readonly bloodGroup: FieldRef<"BloodRequest", 'String'>
+    readonly units: FieldRef<"BloodRequest", 'Int'>
+    readonly locationLat: FieldRef<"BloodRequest", 'Float'>
+    readonly locationLng: FieldRef<"BloodRequest", 'Float'>
+    readonly locationAddress: FieldRef<"BloodRequest", 'String'>
+    readonly hospital: FieldRef<"BloodRequest", 'String'>
+    readonly contact: FieldRef<"BloodRequest", 'String'>
+    readonly urgency: FieldRef<"BloodRequest", 'String'>
+    readonly requiredDate: FieldRef<"BloodRequest", 'DateTime'>
+    readonly status: FieldRef<"BloodRequest", 'String'>
+    readonly createdAt: FieldRef<"BloodRequest", 'DateTime'>
+    readonly updatedAt: FieldRef<"BloodRequest", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * BloodRequest findUnique
+   */
+  export type BloodRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which BloodRequest to fetch.
+     */
+    where: BloodRequestWhereUniqueInput
+  }
+
+  /**
+   * BloodRequest findUniqueOrThrow
+   */
+  export type BloodRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which BloodRequest to fetch.
+     */
+    where: BloodRequestWhereUniqueInput
+  }
+
+  /**
+   * BloodRequest findFirst
+   */
+  export type BloodRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which BloodRequest to fetch.
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BloodRequests to fetch.
+     */
+    orderBy?: BloodRequestOrderByWithRelationInput | BloodRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BloodRequests.
+     */
+    cursor?: BloodRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BloodRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BloodRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BloodRequests.
+     */
+    distinct?: BloodRequestScalarFieldEnum | BloodRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BloodRequest findFirstOrThrow
+   */
+  export type BloodRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which BloodRequest to fetch.
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BloodRequests to fetch.
+     */
+    orderBy?: BloodRequestOrderByWithRelationInput | BloodRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for BloodRequests.
+     */
+    cursor?: BloodRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BloodRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BloodRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BloodRequests.
+     */
+    distinct?: BloodRequestScalarFieldEnum | BloodRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BloodRequest findMany
+   */
+  export type BloodRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter, which BloodRequests to fetch.
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of BloodRequests to fetch.
+     */
+    orderBy?: BloodRequestOrderByWithRelationInput | BloodRequestOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing BloodRequests.
+     */
+    cursor?: BloodRequestWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` BloodRequests from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` BloodRequests.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of BloodRequests.
+     */
+    distinct?: BloodRequestScalarFieldEnum | BloodRequestScalarFieldEnum[]
+  }
+
+  /**
+   * BloodRequest create
+   */
+  export type BloodRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * The data needed to create a BloodRequest.
+     */
+    data: XOR<BloodRequestCreateInput, BloodRequestUncheckedCreateInput>
+  }
+
+  /**
+   * BloodRequest createMany
+   */
+  export type BloodRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many BloodRequests.
+     */
+    data: BloodRequestCreateManyInput | BloodRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BloodRequest createManyAndReturn
+   */
+  export type BloodRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * The data used to create many BloodRequests.
+     */
+    data: BloodRequestCreateManyInput | BloodRequestCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * BloodRequest update
+   */
+  export type BloodRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * The data needed to update a BloodRequest.
+     */
+    data: XOR<BloodRequestUpdateInput, BloodRequestUncheckedUpdateInput>
+    /**
+     * Choose, which BloodRequest to update.
+     */
+    where: BloodRequestWhereUniqueInput
+  }
+
+  /**
+   * BloodRequest updateMany
+   */
+  export type BloodRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update BloodRequests.
+     */
+    data: XOR<BloodRequestUpdateManyMutationInput, BloodRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which BloodRequests to update
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * Limit how many BloodRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BloodRequest updateManyAndReturn
+   */
+  export type BloodRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * The data used to update BloodRequests.
+     */
+    data: XOR<BloodRequestUpdateManyMutationInput, BloodRequestUncheckedUpdateManyInput>
+    /**
+     * Filter which BloodRequests to update
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * Limit how many BloodRequests to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * BloodRequest upsert
+   */
+  export type BloodRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * The filter to search for the BloodRequest to update in case it exists.
+     */
+    where: BloodRequestWhereUniqueInput
+    /**
+     * In case the BloodRequest found by the `where` argument doesn't exist, create a new BloodRequest with this data.
+     */
+    create: XOR<BloodRequestCreateInput, BloodRequestUncheckedCreateInput>
+    /**
+     * In case the BloodRequest was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<BloodRequestUpdateInput, BloodRequestUncheckedUpdateInput>
+  }
+
+  /**
+   * BloodRequest delete
+   */
+  export type BloodRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+    /**
+     * Filter which BloodRequest to delete.
+     */
+    where: BloodRequestWhereUniqueInput
+  }
+
+  /**
+   * BloodRequest deleteMany
+   */
+  export type BloodRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which BloodRequests to delete
+     */
+    where?: BloodRequestWhereInput
+    /**
+     * Limit how many BloodRequests to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * BloodRequest without action
+   */
+  export type BloodRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the BloodRequest
+     */
+    select?: BloodRequestSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the BloodRequest
+     */
+    omit?: BloodRequestOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -3239,6 +4502,27 @@ export namespace Prisma {
   };
 
   export type PhoneOTPScalarFieldEnum = (typeof PhoneOTPScalarFieldEnum)[keyof typeof PhoneOTPScalarFieldEnum]
+
+
+  export const BloodRequestScalarFieldEnum: {
+    id: 'id',
+    requesterPhone: 'requesterPhone',
+    patientName: 'patientName',
+    bloodGroup: 'bloodGroup',
+    units: 'units',
+    locationLat: 'locationLat',
+    locationLng: 'locationLng',
+    locationAddress: 'locationAddress',
+    hospital: 'hospital',
+    contact: 'contact',
+    urgency: 'urgency',
+    requiredDate: 'requiredDate',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type BloodRequestScalarFieldEnum = (typeof BloodRequestScalarFieldEnum)[keyof typeof BloodRequestScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -3517,6 +4801,110 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"PhoneOTP"> | Date | string
   }
 
+  export type BloodRequestWhereInput = {
+    AND?: BloodRequestWhereInput | BloodRequestWhereInput[]
+    OR?: BloodRequestWhereInput[]
+    NOT?: BloodRequestWhereInput | BloodRequestWhereInput[]
+    id?: StringFilter<"BloodRequest"> | string
+    requesterPhone?: StringFilter<"BloodRequest"> | string
+    patientName?: StringFilter<"BloodRequest"> | string
+    bloodGroup?: StringFilter<"BloodRequest"> | string
+    units?: IntFilter<"BloodRequest"> | number
+    locationLat?: FloatNullableFilter<"BloodRequest"> | number | null
+    locationLng?: FloatNullableFilter<"BloodRequest"> | number | null
+    locationAddress?: StringFilter<"BloodRequest"> | string
+    hospital?: StringNullableFilter<"BloodRequest"> | string | null
+    contact?: StringFilter<"BloodRequest"> | string
+    urgency?: StringFilter<"BloodRequest"> | string
+    requiredDate?: DateTimeNullableFilter<"BloodRequest"> | Date | string | null
+    status?: StringFilter<"BloodRequest"> | string
+    createdAt?: DateTimeFilter<"BloodRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"BloodRequest"> | Date | string
+  }
+
+  export type BloodRequestOrderByWithRelationInput = {
+    id?: SortOrder
+    requesterPhone?: SortOrder
+    patientName?: SortOrder
+    bloodGroup?: SortOrder
+    units?: SortOrder
+    locationLat?: SortOrderInput | SortOrder
+    locationLng?: SortOrderInput | SortOrder
+    locationAddress?: SortOrder
+    hospital?: SortOrderInput | SortOrder
+    contact?: SortOrder
+    urgency?: SortOrder
+    requiredDate?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BloodRequestWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: BloodRequestWhereInput | BloodRequestWhereInput[]
+    OR?: BloodRequestWhereInput[]
+    NOT?: BloodRequestWhereInput | BloodRequestWhereInput[]
+    requesterPhone?: StringFilter<"BloodRequest"> | string
+    patientName?: StringFilter<"BloodRequest"> | string
+    bloodGroup?: StringFilter<"BloodRequest"> | string
+    units?: IntFilter<"BloodRequest"> | number
+    locationLat?: FloatNullableFilter<"BloodRequest"> | number | null
+    locationLng?: FloatNullableFilter<"BloodRequest"> | number | null
+    locationAddress?: StringFilter<"BloodRequest"> | string
+    hospital?: StringNullableFilter<"BloodRequest"> | string | null
+    contact?: StringFilter<"BloodRequest"> | string
+    urgency?: StringFilter<"BloodRequest"> | string
+    requiredDate?: DateTimeNullableFilter<"BloodRequest"> | Date | string | null
+    status?: StringFilter<"BloodRequest"> | string
+    createdAt?: DateTimeFilter<"BloodRequest"> | Date | string
+    updatedAt?: DateTimeFilter<"BloodRequest"> | Date | string
+  }, "id">
+
+  export type BloodRequestOrderByWithAggregationInput = {
+    id?: SortOrder
+    requesterPhone?: SortOrder
+    patientName?: SortOrder
+    bloodGroup?: SortOrder
+    units?: SortOrder
+    locationLat?: SortOrderInput | SortOrder
+    locationLng?: SortOrderInput | SortOrder
+    locationAddress?: SortOrder
+    hospital?: SortOrderInput | SortOrder
+    contact?: SortOrder
+    urgency?: SortOrder
+    requiredDate?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: BloodRequestCountOrderByAggregateInput
+    _avg?: BloodRequestAvgOrderByAggregateInput
+    _max?: BloodRequestMaxOrderByAggregateInput
+    _min?: BloodRequestMinOrderByAggregateInput
+    _sum?: BloodRequestSumOrderByAggregateInput
+  }
+
+  export type BloodRequestScalarWhereWithAggregatesInput = {
+    AND?: BloodRequestScalarWhereWithAggregatesInput | BloodRequestScalarWhereWithAggregatesInput[]
+    OR?: BloodRequestScalarWhereWithAggregatesInput[]
+    NOT?: BloodRequestScalarWhereWithAggregatesInput | BloodRequestScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"BloodRequest"> | string
+    requesterPhone?: StringWithAggregatesFilter<"BloodRequest"> | string
+    patientName?: StringWithAggregatesFilter<"BloodRequest"> | string
+    bloodGroup?: StringWithAggregatesFilter<"BloodRequest"> | string
+    units?: IntWithAggregatesFilter<"BloodRequest"> | number
+    locationLat?: FloatNullableWithAggregatesFilter<"BloodRequest"> | number | null
+    locationLng?: FloatNullableWithAggregatesFilter<"BloodRequest"> | number | null
+    locationAddress?: StringWithAggregatesFilter<"BloodRequest"> | string
+    hospital?: StringNullableWithAggregatesFilter<"BloodRequest"> | string | null
+    contact?: StringWithAggregatesFilter<"BloodRequest"> | string
+    urgency?: StringWithAggregatesFilter<"BloodRequest"> | string
+    requiredDate?: DateTimeNullableWithAggregatesFilter<"BloodRequest"> | Date | string | null
+    status?: StringWithAggregatesFilter<"BloodRequest"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"BloodRequest"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"BloodRequest"> | Date | string
+  }
+
   export type DonorCreateInput = {
     id?: string
     phone: string
@@ -3730,6 +5118,132 @@ export namespace Prisma {
     otpHash?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     isUsed?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BloodRequestCreateInput = {
+    id?: string
+    requesterPhone: string
+    patientName: string
+    bloodGroup: string
+    units: number
+    locationLat?: number | null
+    locationLng?: number | null
+    locationAddress: string
+    hospital?: string | null
+    contact: string
+    urgency: string
+    requiredDate?: Date | string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BloodRequestUncheckedCreateInput = {
+    id?: string
+    requesterPhone: string
+    patientName: string
+    bloodGroup: string
+    units: number
+    locationLat?: number | null
+    locationLng?: number | null
+    locationAddress: string
+    hospital?: string | null
+    contact: string
+    urgency: string
+    requiredDate?: Date | string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BloodRequestUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterPhone?: StringFieldUpdateOperationsInput | string
+    patientName?: StringFieldUpdateOperationsInput | string
+    bloodGroup?: StringFieldUpdateOperationsInput | string
+    units?: IntFieldUpdateOperationsInput | number
+    locationLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationAddress?: StringFieldUpdateOperationsInput | string
+    hospital?: NullableStringFieldUpdateOperationsInput | string | null
+    contact?: StringFieldUpdateOperationsInput | string
+    urgency?: StringFieldUpdateOperationsInput | string
+    requiredDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BloodRequestUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterPhone?: StringFieldUpdateOperationsInput | string
+    patientName?: StringFieldUpdateOperationsInput | string
+    bloodGroup?: StringFieldUpdateOperationsInput | string
+    units?: IntFieldUpdateOperationsInput | number
+    locationLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationAddress?: StringFieldUpdateOperationsInput | string
+    hospital?: NullableStringFieldUpdateOperationsInput | string | null
+    contact?: StringFieldUpdateOperationsInput | string
+    urgency?: StringFieldUpdateOperationsInput | string
+    requiredDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BloodRequestCreateManyInput = {
+    id?: string
+    requesterPhone: string
+    patientName: string
+    bloodGroup: string
+    units: number
+    locationLat?: number | null
+    locationLng?: number | null
+    locationAddress: string
+    hospital?: string | null
+    contact: string
+    urgency: string
+    requiredDate?: Date | string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type BloodRequestUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterPhone?: StringFieldUpdateOperationsInput | string
+    patientName?: StringFieldUpdateOperationsInput | string
+    bloodGroup?: StringFieldUpdateOperationsInput | string
+    units?: IntFieldUpdateOperationsInput | number
+    locationLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationAddress?: StringFieldUpdateOperationsInput | string
+    hospital?: NullableStringFieldUpdateOperationsInput | string | null
+    contact?: StringFieldUpdateOperationsInput | string
+    urgency?: StringFieldUpdateOperationsInput | string
+    requiredDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type BloodRequestUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    requesterPhone?: StringFieldUpdateOperationsInput | string
+    patientName?: StringFieldUpdateOperationsInput | string
+    bloodGroup?: StringFieldUpdateOperationsInput | string
+    units?: IntFieldUpdateOperationsInput | number
+    locationLat?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationLng?: NullableFloatFieldUpdateOperationsInput | number | null
+    locationAddress?: StringFieldUpdateOperationsInput | string
+    hospital?: NullableStringFieldUpdateOperationsInput | string | null
+    contact?: StringFieldUpdateOperationsInput | string
+    urgency?: StringFieldUpdateOperationsInput | string
+    requiredDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3998,6 +5512,99 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
+  export type BloodRequestCountOrderByAggregateInput = {
+    id?: SortOrder
+    requesterPhone?: SortOrder
+    patientName?: SortOrder
+    bloodGroup?: SortOrder
+    units?: SortOrder
+    locationLat?: SortOrder
+    locationLng?: SortOrder
+    locationAddress?: SortOrder
+    hospital?: SortOrder
+    contact?: SortOrder
+    urgency?: SortOrder
+    requiredDate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BloodRequestAvgOrderByAggregateInput = {
+    units?: SortOrder
+    locationLat?: SortOrder
+    locationLng?: SortOrder
+  }
+
+  export type BloodRequestMaxOrderByAggregateInput = {
+    id?: SortOrder
+    requesterPhone?: SortOrder
+    patientName?: SortOrder
+    bloodGroup?: SortOrder
+    units?: SortOrder
+    locationLat?: SortOrder
+    locationLng?: SortOrder
+    locationAddress?: SortOrder
+    hospital?: SortOrder
+    contact?: SortOrder
+    urgency?: SortOrder
+    requiredDate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BloodRequestMinOrderByAggregateInput = {
+    id?: SortOrder
+    requesterPhone?: SortOrder
+    patientName?: SortOrder
+    bloodGroup?: SortOrder
+    units?: SortOrder
+    locationLat?: SortOrder
+    locationLng?: SortOrder
+    locationAddress?: SortOrder
+    hospital?: SortOrder
+    contact?: SortOrder
+    urgency?: SortOrder
+    requiredDate?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type BloodRequestSumOrderByAggregateInput = {
+    units?: SortOrder
+    locationLat?: SortOrder
+    locationLng?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
@@ -4024,6 +5631,14 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -4198,6 +5813,33 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
 

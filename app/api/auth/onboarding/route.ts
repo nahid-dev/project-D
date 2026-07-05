@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const validatedData = onboardingSchema.parse(body);
 
     const { 
-      phone, name, bloodGroup, locationLat, locationLng, 
+      phone, name, bloodGroup, gender, locationLat, locationLng, 
       locationAddress, lastDonationDate, isAvailable 
     } = validatedData;
 
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
       update: {
         fullName: name,
         bloodType: bloodGroup,
+        gender: gender || null,
         locationLat: locationLat ?? null,
         locationLng: locationLng ?? null,
         locationAddress: locationAddress || null,
@@ -32,6 +33,7 @@ export async function POST(req: Request) {
         phone,
         fullName: name,
         bloodType: bloodGroup,
+        gender: gender || null,
         locationLat: locationLat ?? null,
         locationLng: locationLng ?? null,
         locationAddress: locationAddress || null,

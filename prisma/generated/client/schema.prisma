@@ -42,3 +42,21 @@ model PhoneOTP {
 
   @@index([phone])
 }
+
+model BloodRequest {
+  id              String    @id @default(uuid())
+  requesterPhone  String
+  patientName     String
+  bloodGroup      String
+  units           Int
+  locationLat     Float?
+  locationLng     Float?
+  locationAddress String
+  hospital        String?
+  contact         String
+  urgency         String
+  requiredDate    DateTime?
+  status          String    @default("pending")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}

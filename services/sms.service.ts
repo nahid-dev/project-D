@@ -3,25 +3,22 @@
  */
 
 export async function sendOTP(phone: string, otp: string): Promise<boolean> {
-  const apiKey = process.env.api_key || process.env.API_KEY;
-  
-  if (!apiKey) {
-    console.error('[SMS_ERROR] Missing API key for SMS gateway. Please check your .env file.');
-    // In development, you might still want to proceed or just return false
-    // Returning true here if we want to allow dev testing without real SMS
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[SMS_MOCK_FALLBACK] Sending OTP [${otp}] to ${phone}`);
-      return true;
-    }
-    return false;
+  // const apiKey = process.env.api_key || process.env.API_KEY;
+  const apiKey = process.env.api_key;
+  const sender_id = process.env.SENDER_ID
+
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[SMS_MOCK_FALLBACK WHILE RUNNING DEVELOPMENT NOT PRODUCTION] Sending OTP [${otp}] to ${phone}`);
+    return true;
   }
 
   // Ensure the phone number format is correct (removing '+' if it exists)
   // The API requires format like 8801800000000
   const formattedPhone = phone.startsWith('+') ? phone.slice(1) : phone;
-  
-  const msg = `Your GiveBlood registration OTP is: ${otp}. It will expire in 5 minutes.`;
-  const url = `https://api.sms.net.bd/sendsms?api_key=${encodeURIComponent(apiKey)}&msg=${encodeURIComponent(msg)}&to=${formattedPhone}`;
+
+  const msg = `Your BloodBag OTP is: ${otp}. It will expire in 5 minutes.`;
+  // const url = `https://api.sms.net.bd/sendsms?api_key=${encodeURIComponent(apiKey)}&msg=${encodeURIComponent(msg)}&to=${formattedPhone}`;
+  const url = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(apiKey || '')}&type=text&number=${formattedPhone}&senderid=${sender_id}&message=${encodeURIComponent(msg)}`
 
   try {
     const response = await fetch(url);

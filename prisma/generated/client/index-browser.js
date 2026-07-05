@@ -151,6 +151,24 @@ exports.Prisma.PhoneOTPScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.BloodRequestScalarFieldEnum = {
+  id: 'id',
+  requesterPhone: 'requesterPhone',
+  patientName: 'patientName',
+  bloodGroup: 'bloodGroup',
+  units: 'units',
+  locationLat: 'locationLat',
+  locationLng: 'locationLng',
+  locationAddress: 'locationAddress',
+  hospital: 'hospital',
+  contact: 'contact',
+  urgency: 'urgency',
+  requiredDate: 'requiredDate',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -169,7 +187,8 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Donor: 'Donor',
-  PhoneOTP: 'PhoneOTP'
+  PhoneOTP: 'PhoneOTP',
+  BloodRequest: 'BloodRequest'
 };
 
 /**

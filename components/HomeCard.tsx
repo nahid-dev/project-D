@@ -9,7 +9,8 @@ interface HomeCardProps {
   buttonText: string;
   icon: ReactNode;
   variant?: "default" | "destructive";
-  href?: string;
+  href: string;
+  type: "donor" | "request";
 }
 
 export default function HomeCard({
@@ -19,6 +20,7 @@ export default function HomeCard({
   icon,
   variant = "default",
   href,
+  type,
 }: HomeCardProps) {
   const ButtonContent = (
     <Button
@@ -36,11 +38,10 @@ export default function HomeCard({
       <CardContent className="pt-8">
         <div className="mb-6 flex justify-center">
           <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:opacity-80 transition-opacity ${
-              variant === "destructive"
-                ? "bg-destructive/10"
-                : "bg-primary/10"
-            }`}
+            className={`w-16 h-16 rounded-full flex items-center justify-center group-hover:opacity-80 transition-opacity ${variant === "destructive"
+              ? "bg-destructive/10"
+              : "bg-primary/10"
+              }`}
           >
             <div className={variant === "destructive" ? "text-destructive" : "text-primary"}>
               {icon}
@@ -56,7 +57,21 @@ export default function HomeCard({
           {description}
         </p>
 
-        {href ? (
+        {href && type === "donor" ? (
+          <div className="flex items-center justify-center gap-4">
+            <Link href={href} className="flex-1">
+              <Button
+                className="w-full"
+                variant={variant}
+                size="lg"
+              >
+                {buttonText}
+              </Button>
+            </Link>
+            <p>Or</p>
+            <Link href={'/login?type=donor-login'}><Button variant="outline">Login</Button></Link>
+          </div>
+        ) : (
           <Link href={href}>
             <Button
               className="w-full"
@@ -66,14 +81,6 @@ export default function HomeCard({
               {buttonText}
             </Button>
           </Link>
-        ) : (
-          <Button
-            className="w-full"
-            variant={variant}
-            size="lg"
-          >
-            {buttonText}
-          </Button>
         )}
       </CardContent>
     </Card>

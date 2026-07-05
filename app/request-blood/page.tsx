@@ -5,23 +5,19 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
-} from '@/components/ui/select';
 import { Droplet, MapPin, Loader2, CheckCircle2, Clock, Hospital, Phone, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/LanguageContext';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import BangladeshLocationSelector, { BangladeshLocation } from '@/components/location/BangladeshLocationSelector';
+import { normalizeLocation } from '@/lib/location/normalizeLocation';
 
 export default function RequestBloodPage() {
   const router = useRouter();
   const { t } = useTranslation();
   
   const [formData, setFormData] = useState({
+    requesterPhone: '',
     patientName: '',
     bloodGroup: '',
     units: '1',
@@ -47,6 +43,30 @@ export default function RequestBloodPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [bdLocation, setBdLocation] = useState<BangladeshLocation>({
+    division: '',
+    district: '',
+    upazila: '',
+  });
+  
+  // Sync bdLocation to formData — geocode for lat/lng
+  useEffect(() => {
+    if (bdLocation.division && bdLocation.district && bdLocation.upazila) {
+      normalizeLocation(bdLocation).then(normalized => {
+        if (normalized) {
+          setFormData(prev => ({
+            ...prev,
+            location: {
+              lat: normalized.latitude,
+              lng: normalized.longitude,
+              address: normalized.formattedAddress,
+            }
+          }));
+        }
+      });
+    }
+  }, [bdLocation]);
+
   // Sync detected location to formData
   useEffect(() => {
     if (detectedLocation.lat || detectedLocation.address) {
@@ -58,6 +78,20 @@ export default function RequestBloodPage() {
   }, [detectedLocation]);
 
   useEffect(() => {
+    const requestPhone = localStorage.getItem('requestPhone');
+    const requestBloodGroup = localStorage.getItem('requestBloodGroup');
+    
+    if (!requestPhone) {
+      router.push('/login?type=request');
+      return;
+    }
+
+    setFormData(prev => ({ 
+      ...prev, 
+      requesterPhone: requestPhone,
+      bloodGroup: requestBloodGroup || prev.bloodGroup
+    }));
+
     // Prefill contact from donorProfile if available
     const savedProfile = localStorage.getItem('donorProfile');
     if (savedProfile) {
@@ -70,7 +104,7 @@ export default function RequestBloodPage() {
         console.error('Failed to parse donorProfile');
       }
     }
-  }, []);
+  }, [router]);
 
   const handleLocationFetch = () => {
     getLocation();
@@ -84,20 +118,57 @@ export default function RequestBloodPage() {
 
     setIsSubmitting(true);
     
-    const requestObject = {
-      ...formData,
-      id: Math.random().toString(36).substr(2, 9),
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const response = await fetch('/api/blood-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          units: parseInt(formData.units, 10),
+          locationLat: formData.location.lat,
+          locationLng: formData.location.lng,
+          locationAddress: formData.location.address,
+        }),
+      });
 
-    // Simulate API call
-    setTimeout(() => {
-      const existingRequests = JSON.parse(localStorage.getItem('bloodRequests') || '[]');
-      localStorage.setItem('bloodRequests', JSON.stringify([requestObject, ...existingRequests]));
-      
-      setShowSuccess(true);
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        // Persist this request into the bloodRequests array in localStorage
+        const newRequest = {
+          id: data.data?.id ?? `local_${Date.now()}`,
+          submittedAt: new Date().toISOString(),
+          patientName: formData.patientName,
+          bloodGroup: formData.bloodGroup,
+          units: parseInt(formData.units, 10),
+          location: formData.location,
+          hospital: formData.hospital,
+          contact: formData.contact,
+          urgency: formData.urgency,
+          requiredDate: formData.requiredDate,
+          requesterPhone: formData.requesterPhone,
+        };
+
+        try {
+          const existing = localStorage.getItem('bloodRequests');
+          const requests: typeof newRequest[] = existing ? JSON.parse(existing) : [];
+          requests.push(newRequest);
+          localStorage.setItem('bloodRequests', JSON.stringify(requests));
+        } catch (e) {
+          console.error('Failed to save request to localStorage', e);
+        }
+
+        localStorage.removeItem('requestPhone');
+        localStorage.removeItem('requestBloodGroup');
+        setShowSuccess(true);
+      } else {
+        console.error(data.message);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   const isFormValid = formData.patientName && formData.bloodGroup && formData.units && formData.location.address && formData.contact;
@@ -117,9 +188,9 @@ export default function RequestBloodPage() {
           <Button size="lg" className="h-14 font-bold" onClick={() => router.push('/donors')}>
             {t('view_nearby')}
           </Button>
-          <Button variant="outline" size="lg" className="h-14 font-bold" onClick={() => router.push('/dashboard')}>
+          {/* <Button variant="outline" size="lg" className="h-14 font-bold" onClick={() => router.push('/dashboard')}>
             {t('go_to_dashboard')}
-          </Button>
+          </Button> */}
         </div>
       </div>
     );
@@ -161,27 +232,30 @@ export default function RequestBloodPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Requester Phone */}
+              <div className="space-y-3">
+                <label className="text-sm font-semibold text-foreground/80 flex items-center gap-2 px-1">
+                  <Phone size={16} className="text-primary" />
+                  {t('requester_phone') || 'Requester Phone'} <span className="text-primary">*</span>
+                </label>
+                <Input
+                  value={formData.requesterPhone}
+                  disabled
+                  className="h-12 text-base bg-muted transition-all font-sans font-bold text-foreground/80"
+                />
+              </div>
+
               {/* Blood Group */}
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-foreground/80 flex items-center gap-2 px-1">
                   <Droplet size={16} className="text-primary" />
                   {t('blood_group')} <span className="text-primary">*</span>
                 </label>
-                <Select 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, bloodGroup: value }))}
+                <Input
                   value={formData.bloodGroup}
-                >
-                  <SelectTrigger className="h-12 w-full text-base bg-background/50 focus:bg-background transition-all font-sans">
-                    <SelectValue placeholder={t('select_group')} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((group) => (
-                      <SelectItem key={group} value={group} className="py-3 font-sans font-bold">
-                        {group}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                  disabled
+                  className="h-12 text-base bg-muted transition-all font-sans font-bold text-foreground/80"
+                />
               </div>
 
               {/* Units */}
@@ -205,7 +279,7 @@ export default function RequestBloodPage() {
             <div className="space-y-4">
               <label className="text-sm font-semibold text-foreground/80 flex items-center gap-2 px-1">
                 <MapPin size={16} className="text-primary" />
-                {t('location')} <span className="text-primary">*</span>
+                {t('blood_need_location')} <span className="text-primary">*</span>
               </label>
               <div className="space-y-3">
                 <Button
@@ -229,18 +303,9 @@ export default function RequestBloodPage() {
                 </Button>
                 
                 <div className="relative">
-                  <Input
-                    placeholder={t('manual_location_placeholder')}
-                    value={formData.location.address}
-                    onChange={(e) => {
-                      const newAddress = e.target.value;
-                      setFormData(prev => ({ 
-                        ...prev, 
-                        location: { ...prev.location, address: newAddress } 
-                      }));
-                    }}
-                    className="h-12 text-base bg-background/50 focus:bg-background transition-all"
-                    required
+                  <BangladeshLocationSelector
+                    value={bdLocation}
+                    onChange={setBdLocation}
                   />
                   {locationError && (
                     <p className="text-xs text-destructive mt-1.5 font-medium px-1">{locationError}</p>

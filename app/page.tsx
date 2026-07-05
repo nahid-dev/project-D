@@ -27,7 +27,8 @@ export default function Home() {
             buttonText={t('login_as_donor')}
             icon={<Heart size={32} />}
             variant="default"
-            href="/login?type=donor"
+            href="/login?type=donor-join"
+            type="donor"
           />
 
           <HomeCard
@@ -37,6 +38,7 @@ export default function Home() {
             icon={<Zap size={32} />}
             variant="destructive"
             href="/login?type=request"
+            type="request"
           />
         </div>
       </section>

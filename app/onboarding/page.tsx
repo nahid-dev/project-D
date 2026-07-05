@@ -22,6 +22,8 @@ import { MapPin, Loader2, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/lib/LanguageContext';
 import { useUserLocation } from '@/hooks/useUserLocation';
+import BangladeshLocationSelector, { BangladeshLocation } from '@/components/location/BangladeshLocationSelector';
+import { normalizeLocation } from '@/lib/location/normalizeLocation';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -30,6 +32,7 @@ export default function OnboardingPage() {
   const [formData, setFormData] = useState({
     name: '',
     bloodGroup: '',
+    gender: '',
     location: {
       lat: null as number | null,
       lng: null as number | null,
@@ -50,6 +53,30 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [bdLocation, setBdLocation] = useState<BangladeshLocation>({
+    division: '',
+    district: '',
+    upazila: '',
+  });
+
+  // Sync bdLocation to formData — geocode for lat/lng
+  useEffect(() => {
+    if (bdLocation.division && bdLocation.district && bdLocation.upazila) {
+      normalizeLocation(bdLocation).then(normalized => {
+        if (normalized) {
+          setFormData(prev => ({
+            ...prev,
+            location: {
+              lat: normalized.latitude,
+              lng: normalized.longitude,
+              address: normalized.formattedAddress,
+            }
+          }));
+        }
+      });
+    }
+  }, [bdLocation]);
+
   // Sync detected location to formData
   useEffect(() => {
     if (detectedLocation.lat || detectedLocation.address) {
@@ -59,6 +86,14 @@ export default function OnboardingPage() {
       }));
     }
   }, [detectedLocation]);
+
+  // Sync blood group from login
+  useEffect(() => {
+    const bg = localStorage.getItem('verifiedBloodGroup');
+    if (bg) {
+      setFormData(prev => ({ ...prev, bloodGroup: bg }));
+    }
+  }, []);
 
   // Check if user already has a profile
   useEffect(() => {
@@ -80,7 +115,49 @@ export default function OnboardingPage() {
     getLocation();
   };
 
-  const isFormValid = formData.name && formData.bloodGroup;
+  const isFormValid = formData.name && formData.bloodGroup && formData.gender;
+
+  const handleSkip = async () => {
+    setIsSubmitting(true);
+    const phone = localStorage.getItem('verifiedPhone');
+    if (!phone) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/onboarding', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone,
+          name: 'Anonymous Donor',
+          bloodGroup: formData.bloodGroup || 'A+',
+          gender: '',
+          locationLat: null,
+          locationLng: null,
+          locationAddress: '',
+          lastDonationDate: '',
+          isAvailable: true,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        localStorage.setItem('donorProfile', JSON.stringify({ phone, name: 'Anonymous Donor', bloodGroup: formData.bloodGroup }));
+        // Do NOT remove verifiedPhone here — the dashboard needs it to fetch the profile from the API.
+        // It will be cleared by the dashboard after a successful fetch.
+        localStorage.removeItem('verifiedBloodGroup');
+        setShowSuccess(true);
+        setTimeout(() => router.push('/dashboard'), 2000);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,6 +181,7 @@ export default function OnboardingPage() {
           phone,
           name: formData.name,
           bloodGroup: formData.bloodGroup,
+          gender: formData.gender,
           locationLat: formData.location.lat,
           locationLng: formData.location.lng,
           locationAddress: formData.location.address,
@@ -116,7 +194,9 @@ export default function OnboardingPage() {
 
       if (response.ok && data.success) {
         localStorage.setItem('donorProfile', JSON.stringify({ phone, ...formData }));
-        localStorage.removeItem('verifiedPhone');
+        // Do NOT remove verifiedPhone here — the dashboard needs it to fetch the profile from the API.
+        // It will be cleared by the dashboard after a successful fetch.
+        localStorage.removeItem('verifiedBloodGroup');
         setShowSuccess(true);
         setTimeout(() => router.push('/dashboard'), 2000);
       } else {
@@ -174,36 +254,36 @@ export default function OnboardingPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Blood Group */}
+              {/* Gender */}
               <div className="space-y-3">
                 <label className="text-sm font-semibold text-foreground/80 flex items-center gap-1.5 px-1">
-                  {t('blood_group')} <span className="text-primary">*</span>
+                  {t('gender') || 'Gender'} <span className="text-primary">*</span>
                 </label>
                 <Select 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, bloodGroup: value }))}
-                  value={formData.bloodGroup}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+                  value={formData.gender}
                 >
                   <SelectTrigger className="h-12 w-full text-base bg-background/50 focus:bg-background transition-all">
-                    <SelectValue placeholder={t('select_group')} />
+                    <SelectValue placeholder={t('select_gender') || 'Select gender'} />
                   </SelectTrigger>
                   <SelectContent>
-                    {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((group) => (
-                      <SelectItem key={group} value={group} className="py-3 font-sans">
-                        <span className="font-bold text-primary mr-2">{group}</span>
+                    {['male', 'female', 'other'].map((g) => (
+                      <SelectItem key={g} value={g} className="py-3 font-sans capitalize">
+                        {t(g) || g}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Last Donation Date */}
+              {/* Last Donation Month */}
               <div className="space-y-3">
                 <label htmlFor="lastDonation" className="text-sm font-semibold text-foreground/80 px-1">
-                  {t('last_donation_date')}
+                  {t('last_donation_optional')}
                 </label>
                 <Input
                   id="lastDonation"
-                  type="date"
+                  type="month"
                   value={formData.lastDonationDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, lastDonationDate: e.target.value }))}
                   className="h-12 text-base bg-background/50 focus:bg-background transition-all"
@@ -240,19 +320,9 @@ export default function OnboardingPage() {
                 </div>
                 
                 <div className="relative">
-                  <Input
-                    placeholder={t('manual_location_placeholder')}
-                    value={formData.location.address}
-                    onChange={(e) => {
-                      const newAddress = e.target.value;
-                      setFormData(prev => ({ 
-                        ...prev, 
-                        location: { ...prev.location, address: newAddress } 
-                      }));
-                      // Also update hook state to keep them in sync if needed, 
-                      // or just rely on formData for submission
-                    }}
-                    className="h-12 text-base bg-background/50 focus:bg-background transition-all"
+                  <BangladeshLocationSelector
+                    value={bdLocation}
+                    onChange={setBdLocation}
                   />
                   {locationError && (
                     <p className="text-xs text-destructive mt-1.5 font-medium px-1">{locationError}</p>
@@ -296,22 +366,31 @@ export default function OnboardingPage() {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-3">
               <Button
                 type="submit"
-                className="w-full h-14 text-lg font-bold shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-[0.98]"
+                className="w-full h-14 text-lg font-bold shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-[0.98]"
                 disabled={!isFormValid || isSubmitting}
               >
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                    {t('saving')}
+                    {t('saving') || 'Saving...'}
                   </>
                 ) : (
-                  t('submit')
+                  t('submit') || 'Submit'
                 )}
               </Button>
-              <p className="text-center text-xs text-muted-foreground mt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleSkip}
+                disabled={isSubmitting}
+                className="w-full h-14 text-lg font-bold"
+              >
+                {t('skip') || 'Skip for now'}
+              </Button>
+              <p className="text-center text-xs text-muted-foreground mt-2">
                 {t('terms_text')}
               </p>
             </div>

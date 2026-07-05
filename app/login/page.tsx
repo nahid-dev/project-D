@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Droplet } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 function LoginFormContent() {
   const router = useRouter();
@@ -17,6 +18,7 @@ function LoginFormContent() {
 
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
   const [phone, setPhone] = useState('');
+  const [bloodGroup, setBloodGroup] = useState('');
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -24,6 +26,10 @@ function LoginFormContent() {
 
   const handleSendOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (!bloodGroup && (userType !== 'donor-login')) {
+      setError(t('select_group') || 'Please select a blood group');
+      return;
+    }
     setError('');
     setIsLoading(true);
 
@@ -74,17 +80,32 @@ function LoginFormContent() {
       });
 
       const data = await response.json();
+      
+      console.log('===> page.tsx:84 ~ data', data);
 
       if (response.ok && data.success) {
         console.log('Login verified:', { phone, isNewUser: data.isNewUser });
-        
+
         if (userType === 'request') {
+          localStorage.setItem('requestPhone', phone);
+          localStorage.setItem('requestBloodGroup', bloodGroup);
           router.push('/request-blood');
           return;
         }
 
-        if (data.isNewUser) {
+        if (userType === 'donor-login') {
+          console.log('===> page.tsx:105 ~ userType: ', userType);
+          localStorage.removeItem('donorProfile'); // Clear any stale profile to prevent redirect loops
           localStorage.setItem('verifiedPhone', phone);
+          router.push('/dashboard');
+          return;
+        }
+
+        if (data.isNewUser) {
+          console.log('===> page.tsx:105 ~ data.isNewUser', data.isNewUser);
+          localStorage.removeItem('donorProfile'); // Clear any stale profile to prevent redirect loops
+          localStorage.setItem('verifiedPhone', phone);
+          localStorage.setItem('verifiedBloodGroup', bloodGroup);
           router.push('/onboarding');
         } else {
           localStorage.setItem('donorProfile', JSON.stringify({ phone }));
@@ -101,21 +122,27 @@ function LoginFormContent() {
   };
 
   const getTitle = () => {
-    if (userType === 'donor') {
+    if (userType === 'donor' || userType === 'donor-login') {
       return t('donor_login');
+    }
+    if (userType === 'donor-join' || userType === 'doner-join') {
+      return t('donor_join');
+    }
+    if(userType === 'request'){
+      return t('request_blood');
     }
     return t('login_title');
   };
 
   const getDescription = () => {
-    if (userType === 'donor') {
+    if (userType === 'donor' || userType === 'donor-login' || userType === 'donor-join' || userType === 'doner-join') {
       return t('donor_login_description');
     }
     return t('login_description');
   };
 
   const getSignupLink = () => {
-    if (userType === 'donor') {
+    if (userType === 'donor' || userType === 'donor-login' || userType === 'donor-join' || userType === 'doner-join') {
       return '/register?type=donor';
     }
     return '/register';
@@ -139,7 +166,27 @@ function LoginFormContent() {
                   {error}
                 </div>
               )}
-                          {/* Phone number field */}
+              {/* Blood Group and Phone number fields */}
+              {userType !== 'donor-login' ? (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {t('blood_group') || 'Blood Group'} <span className="text-primary">*</span>
+                  </label>
+                  <Select value={bloodGroup} onValueChange={setBloodGroup}>
+                    <SelectTrigger className="w-full font-sans h-10">
+                      <SelectValue placeholder={t('select_group') || 'Select Blood Group'} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map((group) => (
+                        <SelectItem key={group} value={group} className="font-sans">
+                          <span className="font-bold text-primary mr-2">{group}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : null}
+
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-foreground">
                   {t('phone_number')}
@@ -147,7 +194,7 @@ function LoginFormContent() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+1 (555) 123-4567"
+                  placeholder="017XXXXXXXX"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={isLoading}

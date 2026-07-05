@@ -7,6 +7,8 @@ export async function sendOTP(phone: string, otp: string): Promise<boolean> {
   const apiKey = process.env.api_key;
   const sender_id = process.env.SENDER_ID
 
+  
+  console.log('===> sms.service.ts:11 ~ ', process.env.NODE_ENV);
   if (process.env.NODE_ENV !== 'production') {
     console.log(`[SMS_MOCK_FALLBACK WHILE RUNNING DEVELOPMENT NOT PRODUCTION] Sending OTP [${otp}] to ${phone}`);
     return true;

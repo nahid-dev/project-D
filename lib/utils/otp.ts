@@ -14,9 +14,9 @@ export function generateOTP(): string {
 /**
  * Hashes an OTP or password using bcrypt
  */
-export async function hashData(data: string): Promise<string> {
+export async function hashData(data: string | undefined): Promise<string> {
   const salt = await bcrypt.genSalt(SALT_ROUNDS);
-  return bcrypt.hash(data, salt);
+  return bcrypt.hash(data || '', salt);
 }
 
 /**

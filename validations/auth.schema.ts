@@ -10,7 +10,7 @@ const phoneSchema = z.string()
 
 export const registerSchema = z.object({
   phone: phoneSchema,
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }).optional().or(z.literal('')),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }).optional(),
   fullName: z.string().min(2, { message: "Full name is required" }),
   dob: z.string().refine((date) => !isNaN(Date.parse(date)), { message: "Invalid date of birth" }).optional().or(z.literal('')),
   gender: z.enum(['male', 'female', 'other'], { message: "Gender must be male, female, or other" }).optional().or(z.literal('')),

@@ -12,10 +12,10 @@ export async function POST(req: Request) {
     // Validate request body
     const validatedData = registerSchema.parse(body);
 
-    const { 
-      phone, password, fullName, dob, gender, bloodType, city, 
-      email, healthConditions, locationLat, locationLng, 
-      locationAddress, lastDonationDate, isAvailable 
+    const {
+      phone, password, fullName, dob, gender, bloodType, city,
+      email, healthConditions, locationLat, locationLng,
+      locationAddress, lastDonationDate, isAvailable
     } = validatedData;
 
     // Check if phone already exists
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
         phone,
         password: hashedPassword,
         fullName,
-        dob: new Date(dob),
+        dob: dob ? new Date(dob) : null,
         gender,
         bloodType,
         city,
@@ -78,9 +78,9 @@ export async function POST(req: Request) {
 
     // Return success response (NEVER return OTP in response in production)
     return NextResponse.json(
-      { 
-        success: true, 
-        message: 'Registration successful. OTP sent for verification.' 
+      {
+        success: true,
+        message: 'Registration successful. OTP sent for verification.'
       },
       { status: 201 }
     );
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: 'Validation failed', errors: error.errors },
+        { success: false, message: 'Validation failed', errors: error.issues },
         { status: 400 }
       );
     }

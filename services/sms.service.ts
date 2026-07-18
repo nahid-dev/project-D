@@ -18,7 +18,6 @@ export async function sendOTP(phone: string, otp: string): Promise<boolean> {
   const formattedPhone = phone.startsWith('+') ? phone.slice(1) : phone;
 
   const msg = `Your BloodBag OTP is: ${otp}. It will expire in 5 minutes.`;
-  // const url = `https://api.sms.net.bd/sendsms?api_key=${encodeURIComponent(apiKey)}&msg=${encodeURIComponent(msg)}&to=${formattedPhone}`;
   const url = `http://bulksmsbd.net/api/smsapi?api_key=${encodeURIComponent(apiKey || '')}&type=text&number=${formattedPhone}&senderid=${sender_id}&message=${encodeURIComponent(msg)}`
 
   try {

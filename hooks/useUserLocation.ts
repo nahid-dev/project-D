@@ -33,7 +33,7 @@ export const useUserLocation = () => {
         
         try {
           // Nominatim Reverse Geocoding
-          // Identifying as 'GiveBlood-App' as per Nominatim Policy
+          // Identifying as 'BloodBag-App' as per Nominatim Policy
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=bn,en`
           );

@@ -70,7 +70,7 @@ async function geocodeAddress(query: string): Promise<{ lat: number; lng: number
   const response = await fetch(url, {
     // Adding headers as per Nominatim usage policy
     headers: {
-      'User-Agent': 'GiveBlood-App',
+      'User-Agent': 'BloodBag-App',
       'Accept-Language': 'en'
     },
     // Don't cache to avoid stale lookups if something changes, though cache is fine

@@ -5,7 +5,7 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* About */}
           <div>
-            <h4 className="font-bold text-foreground mb-4">About GiveBlood</h4>
+            <h4 className="font-bold text-foreground mb-4">About BloodBag</h4>
             <p className="text-muted-foreground text-sm">
               Connecting blood donors with those in need. Save lives, one donation at a time.
             </p>
@@ -47,7 +47,7 @@ export default function Footer() {
 
         {/* Footer Bottom */}
         <div className="border-t border-border pt-8 text-center text-muted-foreground text-sm">
-          <p>&copy; 2026 GiveBlood. All rights reserved. | Saving lives, one drop at a time 🩸</p>
+          <p>&copy; 2026 BloodBag. All rights reserved. | Saving lives, one drop at a time 🩸</p>
         </div>
       </div>
     </footer>

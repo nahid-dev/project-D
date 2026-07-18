@@ -1,8 +1,8 @@
 'use client';
 
-import { Droplet } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from '@/lib/LanguageContext';
+import BloodBagLogo from './BloodBagLogo';
 
 export default function Navbar() {
   const { lang, setLang } = useTranslation();
@@ -12,11 +12,11 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
-              <Droplet size={24} />
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-primary-foreground">
+              <BloodBagLogo />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-xl md:text-2xl font-bold text-foreground">GiveBlood</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-foreground">BloodBag</h1>
               <p className="text-xs text-muted-foreground md:hidden">
                 Save Lives with Blood Donation
               </p>

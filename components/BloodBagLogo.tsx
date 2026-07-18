@@ -9,8 +9,8 @@ const BloodBagLogo = () => (
         <path
             d="M12 2v2"
             stroke="#DC2626"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
         />
         <rect
             x="7"
@@ -19,7 +19,7 @@ const BloodBagLogo = () => (
             height="15"
             rx="2"
             stroke="#DC2626"
-            stroke-width="2"
+            strokeWidth="2"
         />
         <path
             d="M8 12h8v5a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-5Z"
@@ -28,8 +28,8 @@ const BloodBagLogo = () => (
         <path
             d="M12 19v3"
             stroke="#DC2626"
-            stroke-width="2"
-            stroke-linecap="round"
+            strokeWidth="2"
+            strokeLinecap="round"
         />
     </svg>
 );
